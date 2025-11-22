@@ -7,16 +7,25 @@
     import Pagination from "../../components/Pagination.svelte";
     import Column from "../../components/Column.svelte";
     import Row from "../../components/Row.svelte";
+    import Search from "../../components/Search.svelte";
+    import { onMount } from "svelte";
+    import { page } from "$app/state";
 
     let { data }: PageProps = $props();
 
     // @ts-ignore
     const destinations = data.destinations as DestinationModel[];
+
+    let searchText = $state<string>("");
+    onMount(() => {
+        searchText = page.url.searchParams.get("search") || "";
+    });
 </script>
 
 <Row centered={true}>
     <Title>Things you might like</Title>
 </Row>
+<Search bind:searchText={searchText}/>
 <Pagination elements={destinations}>
     {#snippet children(destination: DestinationModel)}
         <Destination {destination} />

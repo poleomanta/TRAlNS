@@ -1,14 +1,13 @@
 <script lang="ts">
-  import Row from "./Row.svelte";
   import IconButton from "./IconButton.svelte";
     import { Send } from "@lucide/svelte";
 
   interface Props {
+    searchText?: string;
   }
 
-  let searchText = $state<string>("");
-
   let {
+    searchText = $bindable("")
   }: Props = $props();
 </script>
 

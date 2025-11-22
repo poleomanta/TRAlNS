@@ -1,12 +1,11 @@
 <script lang="ts">
   import { browser } from "$app/environment";
+    import { decodePolyline } from "$lib/util";
   import { onMount } from "svelte";
-  import { CoordinatesModel } from "$lib/classes";
-  import { Route } from "@lucide/svelte";
   interface Props {
     lat: number;
     lon: number;
-    route?: CoordinatesModel[];
+    route?: any;
   }
 
   let { lat, lon, route }: Props = $props();
@@ -17,8 +16,10 @@
 
   //@ts-ignore
   function renderLine(route) {
+    console.log('rendering line')
+    const decodedGeometry = decodePolyline(route.geometry, false);
     let newGeometry = [];
-    for (let point of route) newGeometry.push([point.lat, point.lon]);
+    for (let point of decodedGeometry) newGeometry.push([point[1], point[0]]);
     return {
       type: "Feature",
       properties: {
@@ -30,17 +31,13 @@
       },
     };
   }
-
-  let myStyle = {
-    color: "#37c4ef",
-    weight: 7,
-    opacity: 0.65,
-  };
+  
+  let map: any = $state<any>(null);
 
   onMount(() => {
     if (!browser) return;
     // @ts-ignore
-    const map = L.map(container).setView([lat, lon], 13);
+    map = L.map(container).setView([lat, lon], 13);
 
     // @ts-ignore
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -50,14 +47,20 @@
     }).addTo(map);
     // @ts-ignore
     L.marker([lat, lon]).addTo(map);
-
-    if (route !== undefined) {
-      //@ts-ignore
-      L.geoJSON(renderLine(routes), {
-        style: myStyle,
-      }).addTo(map);
-    }
   });
+
+  const myStyle = {
+    "color": "#ea5b06",
+    "weight": 7,
+    "opacity": 0.65
+  };
+  $effect(() => {
+    if (route == undefined || map == null) return;
+    //@ts-ignore
+    L.geoJSON(renderLine(route), {
+      style: myStyle,
+    }).addTo(map);
+  })
 </script>
 
 <div class="map" bind:this={container}></div>

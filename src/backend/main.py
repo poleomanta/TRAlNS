@@ -5,16 +5,15 @@ from dotenv import load_dotenv
 import os
 import requests
 
-
 app = Flask(__name__)
 
 @app.route('/api/destinations', methods=['GET'])
-def test_destinations():
+def destinations():
   sights = getDestinations()
   return jsonify([sight.toJSON().json for sight in sights])
 
 @app.route('/api/amenities', methods=['GET'])
-def test_amenities():
+def amenities():
   # http://127.0.0.1:8080/api/amenities?lat=48.134672&lon=11.568834
   lat = float(request.args.get('lat'))
   lon = float(request.args.get('lon'))
@@ -28,20 +27,15 @@ def test_amenities():
   return jsonify([group.toJSON().json for group in data])
 
 @app.route('/api/routes', methods=['POST'])
-def get_route():
-      # Extract JSON body from the incoming POST request
-    data = request.get_json(force=True)
-
-    # Expecting the body to contain "points"
-    points = data.get("points", [])
-    api_key = API_KEY
-    # Build the coordinates array [lon, lat] for each point
+def route():
+    points = request.get_json(force=True)
     points_array = [
-        [point["longitude"], point["latitude"]]
+        [point["lon"], point["lat"]]
         for point in points if point is not None
     ]
 
-    url = "https://api.openrouteservice.org/v2/directions/cyclic-regular/json"
+    api_key = API_KEY
+    url = "https://api.openrouteservice.org/v2/directions/foot-walking/json"
     headers = {
         "Authorization": api_key,
         "Content-Type": "application/json"
@@ -49,9 +43,7 @@ def get_route():
     payload = {"coordinates": points_array}
 
     response = requests.post(url, headers=headers, json=payload)
-    response.raise_for_status()  
     return response.json()
-    
 
 if __name__ == '__main__':
  load_dotenv() 
