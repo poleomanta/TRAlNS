@@ -21,9 +21,9 @@ def test_amenities():
   radius = request.args.get('radius')
   if radius is None:
     # Default is 300 metres
-    data = getAmenityDataByLocation(lat,lon)
+    data = getAmenityDataByLocation(lat=lat,lon=lon)
   else:
-    data = getAmenityDataByLocation(lat,lon, int(radius))
+    data = getAmenityDataByLocation(lat=lat,lon=lon, radius=int(radius))
 
   return jsonify([group.toJSON().json for group in data])
 

@@ -4,6 +4,7 @@ from enum import Enum
 
 import osmnx as ox
 
+from osmnx.distance import great_circle, euclidean
 from osmnx._errors import InsufficientResponseError
 from destinations import Destination
 from geopandas import GeoDataFrame
@@ -15,22 +16,33 @@ from flask import jsonify
 class Location:
     lat: float
     lon: float
+    dist_from_origin: float = 0
 
     def toJSON(self):
         return jsonify({
         'lat': self.lat,
         'lon': self.lon,
+        'dist_from_origin': self.dist_from_origin,
         })
 
-def _osmgeo_to_location(item) -> Location:
+def _osmgeo_to_location(item, origin: Location) -> Location:
+    # ACHTUNG: seems like these geometry objects are (lon, lat)!!
     if isinstance(item, Point):
-        return Location(lat=item.x, lon=item.y)
+        lat=item.y
+        lon=item.x
     elif isinstance(item, Polygon):
-        #TODO get a center
+        #TODO get a center  
         first = item.exterior.coords[0]
-        return Location(lat=first[0], lon=first[1])
+        lat=first[1]
+        lon=first[0]
     else:
         raise ValueError("Unknown geometry for amenity!")
+
+    dist = great_circle(lat1=float(lat), lon1=float(lon), lat2=float(origin.lat), lon2=float(origin.lon))
+    return Location(lat, lon, dist)
+
+def _get_location_df(df: GeoDataFrame, origin: Location) -> list[Location]:
+    return [_osmgeo_to_location(item, origin) for item in df['geometry'].tolist()]
 
 class AmenityType(str, Enum):
     WC = "WC"
@@ -75,20 +87,28 @@ class AmenityGroup:
         'locations': self.locations,
         })
 
-def _get_location_df(df: GeoDataFrame) -> list[Location]:
-    return [_osmgeo_to_location(item) for item in df['geometry'].tolist()]
+class AmenityFinder:
+    def __init__(self, origin: Location, df: GeoDataFrame):
+        self.origin = origin
+        self.df = df
 
-def _getWCData(df: GeoDataFrame) -> AmenityGroup:
-    df2 = df[df['amenity'].isin(['toilets'])]
-    return AmenityGroup(kind=AmenityType.WC, locations=_get_location_df(df2))
+    def _getWCData(self) -> AmenityGroup:
+        df2 = self.df[self.df['amenity'].isin(['toilets'])]
+        return AmenityGroup(kind=AmenityType.WC, locations=_get_location_df(df2, self.origin))
 
-def _getFountainData(df: GeoDataFrame) -> AmenityGroup:
-    df2 = df[df['amenity'].isin(['water_point', 'drinking_water'])]
-    return AmenityGroup(kind=AmenityType.FOUNTAIN, locations=_get_location_df(df2))
+    def _getFountainData(self) -> AmenityGroup:
+        df2 = self.df[self.df['amenity'].isin(['water_point', 'drinking_water'])]
+        return AmenityGroup(kind=AmenityType.FOUNTAIN, locations=_get_location_df(df2, self.origin))
 
-def _getRestData(df: GeoDataFrame) -> AmenityGroup:
-    df2 = df[df['amenity'].isin(['bench', 'shelter', 'lounger', 'lounge'])]
-    return AmenityGroup(kind=AmenityType.REST, locations=_get_location_df(df2))
+    def _getRestData(self) -> AmenityGroup:
+        df2 = self.df[self.df['amenity'].isin(['bench', 'shelter', 'lounger', 'lounge'])]
+        return AmenityGroup(kind=AmenityType.REST, locations=_get_location_df(df2, self.origin))
+
+    def getAmenityData(self) -> list[AmenityGroup]:
+    # TODO add more amenitiess
+    # https://wiki.openstreetmap.org/wiki/Key:amenity#Values
+    # Also fix this class structure
+        return [self._getWCData(), self._getFountainData(), self._getRestData()]
 
 def getAmenityDataByLocation(lat: float, lon: float, radius: int = 300) -> list[AmenityGroup]:
     """ Get all amenities by address and distance radius
@@ -101,7 +121,6 @@ def getAmenityDataByLocation(lat: float, lon: float, radius: int = 300) -> list[
     except InsufficientResponseError:
         return []
 
-    # TODO add more amenitiess
-    # https://wiki.openstreetmap.org/wiki/Key:amenity#Values
-    return [_getWCData(df), _getFountainData(df), _getRestData(df)]
+    finder = AmenityFinder(origin=Location(lat=lat, lon=lon), df=df)
+    return finder.getAmenityData()
 
