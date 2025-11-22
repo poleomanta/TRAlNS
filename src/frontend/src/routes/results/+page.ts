@@ -1,11 +1,13 @@
 import type { PageLoad } from "./$types";
+import { unusedTags } from "$lib/tags";
+
 
 export const load: PageLoad = async ({ url, params, fetch }) => {
   let allDestinations = await fetch("/api/destinations").then(res => res.json());
 
   const tagParam = url.searchParams.get("tag");
   if (tagParam && tagParam.length > 0) {
-    allDestinations = allDestinations.filter((dest: any) => dest.tag === tagParam);
+    allDestinations = allDestinations.filter((dest: any) => dest.tag === tagParam && !unusedTags.includes(tagParam));
   }
 
   const textParam = decodeURIComponent(url.searchParams.get("search") || "");
