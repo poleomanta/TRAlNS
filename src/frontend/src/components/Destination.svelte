@@ -137,6 +137,11 @@
             {/if}
         </Row>
     </div>
+    {#if destination.description}
+        <div class="description">
+            {destination.description}
+        </div>
+    {/if}
     {/if}
 
 
@@ -177,9 +182,6 @@
         flex-direction: column;
         gap: 1em;
         background-color: hsl(0, 0%, 95%);
-    }
-    .description {
-        background-color: hsl(0, 0%, 98%);
     }
     div.grid {
         display: grid;
