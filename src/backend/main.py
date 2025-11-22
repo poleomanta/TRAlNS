@@ -3,6 +3,7 @@ from amenities import getAmenityDataByLocation
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
+import requests
 
 
 app = Flask(__name__)
@@ -25,8 +26,6 @@ def test_amenities():
     data = getAmenityDataByLocation(lat,lon, int(radius))
 
   return jsonify([group.toJSON().json for group in data])
-
-  import requests
 
 @app.route('/api/routes', methods=['POST'])
 def get_route():
