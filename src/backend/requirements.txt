@@ -1,3 +1,4 @@
 OSMPythonTools
 flask
 jsonify
+osmnx

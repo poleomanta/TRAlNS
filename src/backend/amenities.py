@@ -4,7 +4,9 @@ from enum import Enum
 from typing import Final
 from pathlib import Path
 import os
-import pandas as pd
+
+import osmnx as ox
+
 
 # WC, trinkwasser, spielplatz, benches and parks
 
@@ -19,6 +21,8 @@ class AmenityType(str, Enum):
 # TODO consider if class with more info location specific
 @dataclass
 class Location:
+    # By default the datasets use
+    # https://en.wikipedia.org/wiki/European_Terrestrial_Reference_System_1989
     lat: float
     lon: float
 
@@ -37,24 +41,40 @@ class AmenityGroup:
     status: AmenityStatus
     locations: list[Location] = field(default_factory=list)
 
+def point_to_location(entry: str) -> Location:
+    # POINT (692441.0257008562 5331488.180897921)
+    print(entry)
+    print(entry[6:-1].split(' '))
+    (lat, lon) = entry[6:-1].split(' ')
+    return Location(lat=lat, lon=lon)
 
-def getAmenities(radius: int, data) -> AmenityGroup:
-    # TODO generalise this
-    # For now do WC as an example
-    pass
-
-def getFountainLocations() -> list[Location]:
+def getFountainLocations() -> AmenityGroup:
     """Gets all fountains from file"""
-    data = pd.read_csv("data/munich_opensource/trinkwasser/opendata_trinkwasserbrunnen.csv", usecols=["shape"])
-    print(data)
+    # Build query for desired objects within the area
+    query = overpassQueryBuilder(
+        elementType='node',
+        area=areaId,
+        selector='"amenity"',
+        out='body'
+    )
 
-os.chdir(Path("../../")) # Main repo
-getFountainLocations()
+    result = overpass.query(query)
+    wcs = result.elements()
+
+    for wc in wcs:
+        tags = wc.tags()
+        print('---')
+        print(tags.get('name'))
+        print(tags.get('amenity'))
+        print(wc.lat())
+        print(wc.lon())
 
 
+# get building details from address within 1000 m
+place = "Viktualienmarkt, Munich, Germany"
+gdf = ox.features.features_from_address(
+    place, {'amenity': 'bench'}, dist=300)
 
-
-
-
-
+# print first 5 building details
+print(gdf.head(5))
 
