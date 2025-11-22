@@ -29,6 +29,12 @@ export function addDestinationToPlan(destination: DestinationModel): void {
   savePlan(plan);
 }
 
+export function removeDestinationFromPlanByDestination(destination: DestinationModel): void {
+  const plan = getPlan();
+  plan.destinations.filter(dest => JSON.stringify(dest) != JSON.stringify(destination));
+  savePlan(plan);
+}
+
 export function removeDestinationFromPlan(position: number): void {
   const plan = getPlan();
   plan.destinations.splice(position, 1);

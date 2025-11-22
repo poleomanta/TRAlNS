@@ -14,7 +14,7 @@
 
 <Subtitle>Things you might like</Subtitle>
 <Pagination elements={destinations}>
-    {#snippet children(destination: DestinationModel) }
+    {#snippet children(destination: DestinationModel)}
         <Destination {destination} />
     {/snippet}
 </Pagination>
