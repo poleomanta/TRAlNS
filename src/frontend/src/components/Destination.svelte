@@ -19,6 +19,8 @@
 
     interface Props {
         destination: DestinationModel;
+        showMap?: boolean;
+        amenityLoadCallback?: (amenities: Record<string, AmenityModel>) => void;
     }
 
     let plan = $state(new PlanModel([]));
@@ -57,12 +59,14 @@
             loadingAmenities = false;
             // @ts-ignore
             amenitiesByType = Object.fromEntries(amenities.map(x => [x.kind, x]));
+            amenityLoadCallback(amenitiesByType);
         }
     }
-    let { destination }: Props = $props();
+    let { destination, showMap=true, amenityLoadCallback=(() => {}) }: Props = $props();
 </script>
 
 <div class="card">
+    {#if showMap}
     {#if destination.name}
         <Subtitle>
             {destination.name}
@@ -81,7 +85,6 @@
             {destination.description}
         </div>
     {/if}
-
     <Map lat={destination.lat} lon={destination.lon} amenities={amenitiesByType} />
     <Row right={true}>
         <IconButton click={toggleInfo}>
@@ -105,6 +108,37 @@
             </IconButton>
         {/if}
     </Row>
+    {:else}
+    <div class="grid">
+        <Subtitle>
+            {destination.name}
+        </Subtitle>
+        <Tag name={destination.tag} />
+        <Row right={true}>
+            <IconButton click={toggleInfo}>
+                <Info />
+            </IconButton>
+            {#if !inPlan}
+                <IconButton
+                    click={() => {
+                        addDestinationToPlan(destination);
+                        refreshPlan();
+                    }}
+                    ><Plus />
+                </IconButton>
+            {:else}
+                <IconButton
+                    click={() => {
+                        removeDestinationFromPlanByDestination(destination);
+                        refreshPlan();
+                    }}
+                    ><Minus />
+                </IconButton>
+            {/if}
+        </Row>
+    </div>
+    {/if}
+
 
     {#if infoShown}
         <div class="info">
@@ -146,5 +180,12 @@
     }
     .description {
         background-color: hsl(0, 0%, 98%);
+    }
+    div.grid {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        align-items: center;
+        gap: 0.5em;
+        width: 100%;
     }
 </style>

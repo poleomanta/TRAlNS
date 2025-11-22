@@ -7,6 +7,8 @@
     import { CoordinatesModel } from "$lib/classes";
     import Map from "../../components/Map.svelte";
     import { onMount } from "svelte";
+    import Title from "../../components/Title.svelte";
+    import Row from "../../components/Row.svelte";
 
     let destinations = $derived.by(() => {
         if (browser) return getPlan().destinations;
@@ -27,9 +29,13 @@
         const rjson = await r.json();
         route = rjson.routes[0];
     })
+
+   let amenitiesByType = $state<Record<string, any>>({}); 
 </script>
 
-<Subtitle>My planned destinations</Subtitle>
+<Row centered={true}>
+<Title>My planned destinations</Title>
+</Row>
 {#if destinations.length == 0}
     <p>No destinations in your plan yet. Go to the search page to add some!</p>
 {:else}
@@ -38,10 +44,11 @@
         lon={destinations[0].lon}
         {route}
         destinations={destinations}
+        amenities={amenitiesByType}
     ></Map>
     <Column>
         {#each destinations as d}
-            <Destination destination={d} />
+            <Destination destination={d} showMap={false} amenityLoadCallback={(amenities) => { amenitiesByType = amenities; }} />
         {/each}
     </Column>
 {/if}
