@@ -1,6 +1,4 @@
 <script lang="ts">
-    import hash from "hash.js";
-    import type { Snippet } from "svelte";
     import Tag from "./Tag.svelte";
     import Row from "./Row.svelte";
     import Map from "./Map.svelte";

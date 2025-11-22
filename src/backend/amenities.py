@@ -7,11 +7,19 @@ import osmnx as ox
 from destinations import Destination
 from geopandas import GeoDataFrame
 from shapely.geometry import LineString, Point, Polygon
+from flask import jsonify
+
 
 @dataclass
 class Location:
     lat: float
     lon: float
+
+    def toJSON(self):
+        return jsonify({
+        'lat': self.lat,
+        'lon': self.lon,
+        })
 
 def _osmgeo_to_location(item) -> Location:
     if isinstance(item, Point):
@@ -59,13 +67,19 @@ class AmenityGroup:
         else:
             return AmenityStatus.BAD
 
+    def toJSON(self):
+        return jsonify({
+        'kind': self.kind,
+        'status': self.status,
+        'locations': self.locations,
+        })
+
 def _get_location_df(df: GeoDataFrame) -> list[Location]:
     return [_osmgeo_to_location(item) for item in df['geometry'].tolist()]
 
 def _getWCData(df: GeoDataFrame) -> AmenityGroup:
     df2 = df[df['amenity'].isin(['toilets'])]
     return AmenityGroup(kind=AmenityType.WC, locations=_get_location_df(df2))
-
 
 def _getFountainData(df: GeoDataFrame) -> AmenityGroup:
     df2 = df[df['amenity'].isin(['water_point', 'drinking_water'])]
@@ -88,3 +102,4 @@ def getAmenityDataByLocation(lat: float, lon: float, radius: int = 300) -> list[
 
     # TODO add more amenitiess d
     return [_getWCData(df), _getFountainData(df), _getRestData(df)]
+
