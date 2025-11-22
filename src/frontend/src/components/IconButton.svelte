@@ -11,6 +11,7 @@
     style?: string;
     tabindex?: number;
     href?: string;
+    disabled?: boolean;
     children?: Snippet;
   }
 
@@ -22,6 +23,7 @@
     style = "",
     tabindex = 0,
     href = "",
+    disabled = false,
     children
   }: Props = $props();
 
@@ -55,7 +57,8 @@
     padding: .5em;
     cursor: pointer;
     position: relative;
-    transition: all ease-in-out .3s;
+    transition: all ease-in-out .2s;
+    opacity: .99;
   }
 
   button.hidden, a.hidden {
@@ -64,14 +67,14 @@
 
   div.circle {
     position: absolute;
-    background-color: blue;
+    background-color: hsl(200, 72%, 65%);
     z-index: -1;
     border-radius: 50%;
     left: 50%;
     top: 50%;
     width: 0%;
     height: 0%;
-    transition: all ease-in-out .3s;
+    transition: all ease-in-out .2s;
     pointer-events: none;
   }
 
@@ -88,6 +91,15 @@
     left: -12.5%;
     top: -12.5%;
   }
+
+  .disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5;
+  }
+
+  .disabled div.circle {
+    display: none !important;
+  }
 </style>
 
 {@render buttonSnippet()}
@@ -100,6 +112,7 @@
       href={href}
       style={style}
       tabindex="{tabindex}"
+      class:disabled={disabled}
     >
       <div class="circle"></div>
       {@render children?.()}
@@ -115,6 +128,8 @@
       type="button"
       style={style}
       tabindex="{tabindex}"
+      class:disabled={disabled}
+      disabled={disabled}
     >
       <div class="circle"></div>
       {@render children?.()}

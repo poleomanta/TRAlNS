@@ -24,41 +24,44 @@
 </script>
 
 <style lang="scss">
-  div {
+  div.page {
     gap: 0.5em;
     display: flex;
     flex-direction: column;
     width: 100%;
   }
+
+  div.pageNumber {
+    width: 5em;
+    text-align: center;
+  }
 </style>
 
 {#snippet pageButtons()}
   <Row centered={true}>
-    {#if currentPage > 1}
     <IconButton click={() => {
         if (currentPage > 1) {
             currentPage = currentPage - 1;
         }
-    }}>
+    }} disabled={currentPage === 1}>
       <ChevronLeft />
     </IconButton>
-    {/if}
-    {currentPage} of {Math.ceil(count / elementsPerPage)}
-    {#if currentPage < Math.ceil(count / elementsPerPage)}
+    <div class="pageNumber">
+      {currentPage} of {Math.ceil(count / elementsPerPage)}
+    </div>
     <IconButton click={() => {
         if (currentPage < Math.ceil(count / elementsPerPage)) {
             currentPage = currentPage + 1;
         }
-    }}>
+    }} disabled={currentPage === Math.ceil(count / elementsPerPage)}>
       <ChevronRight />
     </IconButton>
-    {/if}
   </Row>
 {/snippet}
 
-<div>
+<div class="page">
   {@render pageButtons()}
-  {#each currentElements as element}
+  {#each currentElements as element, index (currentPage * elementsPerPage + index)}
     {@render children(element)}
   {/each}
   {@render pageButtons()}
