@@ -4,12 +4,18 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
 import requests
+from urllib import parse
 
 app = Flask(__name__)
 
 @app.route('/api/destinations', methods=['GET'])
 def destinations():
-  sights = getDestinations()
+  if 'query' in request.args:
+    qstr = request.args.get('query') or ''
+    qstr = parse.unquote(qstr)
+  else:
+    qstr = None
+  sights = getDestinations(qstr=qstr)
   return jsonify([sight.toJSON().json for sight in sights])
 
 @app.route('/api/amenities', methods=['GET'])

@@ -51,7 +51,7 @@
     async function toggleInfo() {
         infoShown = !infoShown;
 
-        if (infoShown) {
+        if (infoShown && Object.keys(amenitiesByType).length === 0) {
             loadingAmenities = true;
             const amenities = await fetch(`/api/amenities?lat=${destination.lat}&lon=${destination.lon}`).then(res => res.json());
             loadingAmenities = false;
@@ -82,7 +82,7 @@
         </div>
     {/if}
 
-    <Map lat={destination.lat} lon={destination.lon} />
+    <Map lat={destination.lat} lon={destination.lon} amenities={amenitiesByType} />
     <Row right={true}>
         <IconButton click={toggleInfo}>
             <Info />

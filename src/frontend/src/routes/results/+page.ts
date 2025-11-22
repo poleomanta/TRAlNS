@@ -3,7 +3,8 @@ import { unusedTags } from "$lib/tags";
 
 
 export const load: PageLoad = async ({ url, params, fetch }) => {
-  let allDestinations = await fetch("/api/destinations").then(res => res.json());
+  const endpoint = `/api/destinations${(url.searchParams.get("search") || "").length > 0 ? `?query=${encodeURIComponent(url.searchParams.get("search") || "")}` : ""}`;
+  let allDestinations = await fetch(endpoint).then(res => res.json());
 
   const tagParam = url.searchParams.get("tag");
   if (tagParam && tagParam.length > 0) {

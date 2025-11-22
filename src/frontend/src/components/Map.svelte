@@ -1,23 +1,24 @@
 <script lang="ts">
   import { browser } from "$app/environment";
-    import { decodePolyline } from "$lib/util";
+  import type { AmenityModel, DestinationModel } from "$lib/classes";
+  import { decodePolyline } from "$lib/util";
   import { onMount } from "svelte";
   interface Props {
     lat: number;
     lon: number;
     route?: any;
+    destinations?: DestinationModel[];
+    amenities?: Record<string, AmenityModel>;
   }
 
-  let { lat, lon, route }: Props = $props();
+  let { lat, lon, route, destinations, amenities }: Props = $props();
 
   let container: HTMLElement | undefined = $state<
     HTMLLegendElement | undefined
   >();
 
   //@ts-ignore
-  function renderLine(route) {
-    console.log('rendering line')
-    const decodedGeometry = decodePolyline(route.geometry, false);
+  function renderLine(decodedGeometry) {
     let newGeometry = [];
     for (let point of decodedGeometry) newGeometry.push([point[1], point[0]]);
     return {
@@ -46,7 +47,13 @@
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
     // @ts-ignore
-    L.marker([lat, lon]).addTo(map);
+    if (!destinations || destinations?.length === 0) L.marker([lat, lon]).addTo(map);
+    else {
+      for (let dest of destinations) {
+        // @ts-ignore
+        L.marker([dest.lat, dest.lon]).addTo(map);
+      }
+    }
   });
 
   const myStyle = {
@@ -56,10 +63,63 @@
   };
   $effect(() => {
     if (route == undefined || map == null) return;
+    const decodedGeometry = decodePolyline(route.geometry, false);
     //@ts-ignore
-    L.geoJSON(renderLine(route), {
+    L.geoJSON(renderLine(decodedGeometry), {
       style: myStyle,
     }).addTo(map);
+  })
+
+  $effect(() => {
+    if (!amenities || map == null || Object.keys(amenities).length === 0) return;
+    // @ts-ignore
+    let toiletIcon = L.icon({
+        iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXRvaWxldC1pY29uIGx1Y2lkZS10b2lsZXQiPjxwYXRoIGQ9Ik03IDEyaDEzYTEgMSAwIDAgMSAxIDEgNSA1IDAgMCAxLTUgNWgtLjU5OGEuNS41IDAgMCAwLS40MjQuNzY1bDEuNTQ0IDIuNDdhLjUuNSAwIDAgMS0uNDI0Ljc2NUg1LjQwMmEuNS41IDAgMCAxLS40MjQtLjc2NUw3IDE4Ii8+PHBhdGggZD0iTTggMThhNSA1IDAgMCAxLTUtNVY0YTIgMiAwIDAgMSAyLTJoOGEyIDIgMCAwIDEgMiAydjgiLz48L3N2Zz4=',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        popupAnchor: [0, 0],
+        shadowUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzNiAzNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgYXJpYS1oaWRkZW49InRydWUiIHJvbGU9ImltZyIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0tdHdlbW9qaSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+PGNpcmNsZSBmaWxsPSIjRTZFN0U4IiBjeD0iMTgiIGN5PSIxOCIgcj0iMTgiPjwvY2lyY2xlPjwvc3ZnPg==',
+        shadowSize: [20, 20],
+        shadowAnchor: [10, 10],
+    });
+    // @ts-ignore
+    let restIcon = L.icon({
+        iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFybWNoYWlyLWljb24gbHVjaWRlLWFybWNoYWlyIj48cGF0aCBkPSJNMTkgOVY2YTIgMiAwIDAgMC0yLTJIN2EyIDIgMCAwIDAtMiAydjMiLz48cGF0aCBkPSJNMyAxNmEyIDIgMCAwIDAgMiAyaDE0YTIgMiAwIDAgMCAyLTJ2LTVhMiAyIDAgMCAwLTQgMHYxLjVhLjUuNSAwIDAgMS0uNS41aC05YS41LjUgMCAwIDEtLjUtLjVWMTFhMiAyIDAgMCAwLTQgMHoiLz48cGF0aCBkPSJNNSAxOHYyIi8+PHBhdGggZD0iTTE5IDE4djIiLz48L3N2Zz4=',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        popupAnchor: [0, 0],
+        shadowUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzNiAzNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgYXJpYS1oaWRkZW49InRydWUiIHJvbGU9ImltZyIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0tdHdlbW9qaSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+PGNpcmNsZSBmaWxsPSIjRTZFN0U4IiBjeD0iMTgiIGN5PSIxOCIgcj0iMTgiPjwvY2lyY2xlPjwvc3ZnPg==',
+        shadowSize: [20, 20],
+        shadowAnchor: [10, 10],
+    });
+    // @ts-ignore
+    let waterIcon = L.icon({
+        iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWdsYXNzLXdhdGVyLWljb24gbHVjaWRlLWdsYXNzLXdhdGVyIj48cGF0aCBkPSJNNS4xMTYgNC4xMDRBMSAxIDAgMCAxIDYuMTEgM2gxMS43OGExIDEgMCAwIDEgLjk5NCAxLjEwNUwxNy4xOSAyMC4yMUEyIDIgMCAwIDEgMTUuMiAyMkg4LjhhMiAyIDAgMCAxLTItMS43OXoiLz48cGF0aCBkPSJNNiAxMmE1IDUgMCAwIDEgNiAwIDUgNSAwIDAgMCA2IDAiLz48L3N2Zz4=',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        popupAnchor: [0, 0],
+        shadowUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzNiAzNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgYXJpYS1oaWRkZW49InRydWUiIHJvbGU9ImltZyIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0tdHdlbW9qaSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+PGNpcmNsZSBmaWxsPSIjRTZFN0U4IiBjeD0iMTgiIGN5PSIxOCIgcj0iMTgiPjwvY2lyY2xlPjwvc3ZnPg==',
+        shadowSize: [20, 20],
+        shadowAnchor: [10, 10],
+    });
+    for (let key in amenities) {
+      const amenity = amenities[key];
+      switch (amenity.kind) {
+        case "WC":
+          var icon = toiletIcon;
+          break;
+        case "REST":
+          var icon = restIcon;
+          break;
+        case "FOUNTAIN":
+          var icon = waterIcon;
+          break;
+      }
+      for (const loc of amenity.locations) {
+        // @ts-ignore
+        L.marker([loc.lat, loc.lon], {icon: icon}).addTo(map)
+      }
+    }
   })
 </script>
 

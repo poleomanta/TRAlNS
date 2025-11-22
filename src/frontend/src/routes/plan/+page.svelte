@@ -25,22 +25,8 @@
             ),
         });
         const rjson = await r.json();
-        console.log(rjson);
         route = rjson.routes[0];
     })
-
-    //$effect(() => {
-    //    if (destinations == []) return undefined;
-    //    const r = await fetch("/api/routes", {
-    //        method: "POST",
-    //        body: JSON.stringify(
-    //            getPlan().destinations.map(
-    //                (dest) => new CoordinatesModel(dest.lat, dest.lon),
-    //            ),
-    //        ),
-    //    });
-    //    console.log(r);
-    //});
 </script>
 
 <Subtitle>My planned destinations</Subtitle>
@@ -51,6 +37,7 @@
         lat={destinations[0].lat}
         lon={destinations[0].lon}
         {route}
+        destinations={destinations}
     ></Map>
     <Column>
         {#each destinations as d}
