@@ -49,7 +49,14 @@ def getDestinations():
   result = overpass.query(query)
   sights = result.elements()
 
-  for sight in sights:
-    print(sight.tags())
+  query2 = overpassQueryBuilder(
+      elementType='node',
+      area=areaId,
+      selector='"leisure"',
+      out='body'
+  )
 
-  return [Destination(sight) for sight in sights if 'name' in sight.tags()]
+  result2 = overpass.query(query2)
+  leisure = result2.elements()
+
+  return [Destination(sight) for sight in sights if 'name' in sight.tags()] + [Destination(l, tag_key='leisure') for l in leisure if 'name' in l.tags()]
