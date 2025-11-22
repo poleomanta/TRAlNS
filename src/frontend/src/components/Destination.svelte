@@ -6,6 +6,8 @@
     import Map from "./Map.svelte";
     import Subtitle from "./Subtitle.svelte";
     import { DestinationModel } from "$lib/classes";
+    import { Plus } from "@lucide/svelte";
+    import { addDestinationToPlan } from "$lib/planner";
 
     interface Props {
         destination: DestinationModel;
@@ -35,6 +37,11 @@
     {/if}
 
     <Map lat={destination.lat} lon={destination.lon} />
+    <button
+        onclick={() => {
+            addDestinationToPlan(destination);
+        }}><Plus />Add to planned destinations</button
+    >
 </div>
 
 <style lang="scss">
@@ -51,5 +58,18 @@
     }
     .description {
         background-color: hsl(0, 0%, 98%);
+    }
+    button {
+        all: unset;
+        cursor: pointer;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 0.25em;
+        flex-direction: row;
+        transition: transform ease-in-out 0.5s;
+    }
+    button:hover {
+        transform: scale(1.1) translate(-3%, -3%);
     }
 </style>
