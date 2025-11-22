@@ -1,5 +1,6 @@
 <script>
     import { DestinationModel } from "$lib/classes";
+    import Column from "../../components/Column.svelte";
     import Destination from "../../components/Destination.svelte";
     import Subtitle from "../../components/Subtitle.svelte";
 
@@ -104,8 +105,8 @@
 </script>
 
 <Subtitle>Things you might like</Subtitle>
-<div>
+<Column>
     {#each destinations as d}
         <Destination destination={d} />
     {/each}
-</div>
+</Column>
