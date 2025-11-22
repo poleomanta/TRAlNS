@@ -3,21 +3,32 @@ from abc import abstractmethod
 from enum import Enum
 
 import osmnx as ox
+
 from destinations import Destination
 from geopandas import GeoDataFrame
+from shapely.geometry import LineString, Point, Polygon
 
-
-# TODO this should be OSM geometry, POINT, POLYGON, etc
 @dataclass
 class Location:
     lat: float
     lon: float
+
+def _osmgeo_to_location(item) -> Location:
+    if isinstance(item, Point):
+        return Location(lat=item.x, lon=item.y)
+    elif isinstance(item, Polygon):
+        #TODO get a center
+        first = item.exterior.coords[0]
+        return Location(lat=first[0], lon=first[1])
+    else:
+        raise ValueError("Unknown geometry for amenity!")
 
 class AmenityType(str, Enum):
     WC = "WC"
     FOUNTAIN = "FOUNTAIN"
     SPIELPLATZ = "SPIELPLATZ"
     PARK = "PARK"
+    REST = "REST"
 
 """ Goal is to convey how good is the amenity status of a given type"""
 class AmenityStatus(str, Enum):
@@ -29,23 +40,18 @@ class AmenityStatus(str, Enum):
 @dataclass
 class AmenityGroup:
     # Group all amenities of one type for a given location
-    base_location: Location
+    kind: AmenityType
     locations: list[Location] # TODO not accurate
     status: AmenityStatus = AmenityStatus.UNKNOWN
-
-    @abstractmethod
-    def getStatus(self) -> AmenityStatus:
-        pass
 
     def __post_init__(self):
         self.status = self.getStatus()
 
-@dataclass
-class WCAmenityGroup(AmenityGroup):
     def getStatus(self) -> AmenityStatus:
+        """Status is good if there are more than 2 in 300m, decent if 1, bad if none
+        This can be implemented in subclasses if necessary
+        """
         count = len(self.locations)
-        print(count)
-
         if count >= 3:
             return AmenityStatus.GOOD
         elif count == 2:
@@ -53,27 +59,32 @@ class WCAmenityGroup(AmenityGroup):
         else:
             return AmenityStatus.BAD
 
-def getAllAmenityData(address: str, radius: int = 300):
-    """ TODO
-    - parameters
+def _get_location_df(df: GeoDataFrame) -> list[Location]:
+    return [_osmgeo_to_location(item) for item in df['geometry'].tolist()]
+
+def _getWCData(df: GeoDataFrame) -> AmenityGroup:
+    df2 = df[df['amenity'].isin(['toilets'])]
+    return AmenityGroup(kind=AmenityType.WC, locations=_get_location_df(df2))
+
+
+def _getFountainData(df: GeoDataFrame) -> AmenityGroup:
+    df2 = df[df['amenity'].isin(['water_point', 'drinking_water'])]
+    return AmenityGroup(kind=AmenityType.FOUNTAIN, locations=_get_location_df(df2))
+
+def _getRestData(df: GeoDataFrame) -> AmenityGroup:
+    df2 = df[df['amenity'].isin(['bench', 'shelter', 'lounger', 'lounge'])]
+    return AmenityGroup(kind=AmenityType.REST, locations=_get_location_df(df2))
+
+def getAmenityDataByLocation(lat: float, lon: float, radius: int = 300) -> list[AmenityGroup]:
+    """ Get all amenities by address and distance radius
+        Example: getAmenityDataByLocation(48.134672, 11.568834)
+        - TODO different radius for different amenities?
      """
     try:
-        return ox.features.features_from_address(
-            address, {'amenity': True}, dist=radius)
+        df = ox.features.features_from_point(
+            (lat, lon), {'amenity': True}, dist=radius)
     except InsufficientResponseError:
         return []
 
-
-def getWCData(df: GeoDataFrame, address) -> WCAmenityGroup:
-    df2 = df[df['amenity'].isin(['toilets'])]
-
-    # Status for toilets is good if there are more than 2 in 300m, decent if 1, bad if none
-    locations = df2['geometry'].tolist()
-    print(locations)
-    return WCAmenityGroup(base_location=address, locations=locations)
-
-    
-place = "Viktualienmarkt, Munich, Germany"
-df = getAllAmenityData(place)
-group = getWCData(df, place)
-print(group)
+    # TODO add more amenitiess d
+    return [_getWCData(df), _getFountainData(df), _getRestData(df)]
