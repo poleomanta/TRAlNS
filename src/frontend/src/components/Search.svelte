@@ -1,8 +1,12 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import Row from "./Row.svelte";
+  import IconButton from "./IconButton.svelte";
+    import { Send } from "@lucide/svelte";
 
   interface Props {
   }
+
+  let searchText = $state<string>("");
 
   let {
   }: Props = $props();
@@ -15,7 +19,21 @@
     height: 1.5em;
     padding: .2em .5em;
     border-radius: .75em;
+    flex-grow: 1;
+  }
+  form {
+    display: flex;
+    gap: .5em;
+    width: 100%;
+    flex-direction: row;
   }
 </style>
 
-<input type="text" placeholder="What do you want to see today..." />
+<form onsubmit={() => {
+  window.location.href = `/results?search=${encodeURIComponent(searchText)}`;
+}}>
+  <input type="text" placeholder="What do you want to see today..." bind:value={searchText}/>
+  <IconButton href={`/results?search=${encodeURIComponent(searchText)}`}>
+    <Send/>
+  </IconButton>
+</form>

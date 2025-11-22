@@ -20,12 +20,12 @@
     );
 </script>
 
-<div style={`background-color:${color};`}>
+<a style={`background-color:${color};`} href={`/results?tag=${name}`}>
     {displayName}
-</div>
+</a>
 
 <style lang="scss">
-    div {
+    a {
         all: unset;
         height: 1.5em;
         padding: 0.2em 0.5em;
@@ -34,5 +34,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+        transition: transform ease-in-out .1s;
+    }
+
+    a:hover {
+        transform: scale(1.1) translate(-1%, 0%);
     }
 </style>

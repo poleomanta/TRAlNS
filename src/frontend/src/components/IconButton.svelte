@@ -13,6 +13,7 @@
     href?: string;
     disabled?: boolean;
     children?: Snippet;
+    submit?: boolean;
   }
 
   let {
@@ -24,6 +25,7 @@
     tabindex = 0,
     href = "",
     disabled = false,
+    submit = false,
     children
   }: Props = $props();
 
@@ -57,7 +59,6 @@
     padding: .5em;
     cursor: pointer;
     position: relative;
-    transition: all ease-in-out .2s;
     opacity: .99;
   }
 
@@ -74,7 +75,7 @@
     top: 50%;
     width: 0%;
     height: 0%;
-    transition: all ease-in-out .2s;
+    transition: all cubic-bezier(0.34, 1.56, 0.64, 1) .25s;
     pointer-events: none;
   }
 
@@ -113,6 +114,7 @@
       style={style}
       tabindex="{tabindex}"
       class:disabled={disabled}
+      type={submit ? "submit" : "button"}
     >
       <div class="circle"></div>
       {@render children?.()}
