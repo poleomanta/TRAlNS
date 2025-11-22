@@ -5,12 +5,18 @@
     children: Snippet;
     spaceBetween?: boolean;
     centered?: boolean;
+    right?: boolean;
   }
 
-  let { children, spaceBetween = false, centered = false }: Props = $props();
+  let {
+    children,
+    spaceBetween = false,
+    centered = false,
+    right = false,
+  }: Props = $props();
 </script>
 
-<div class:spaceBetween class:centered>
+<div class:spaceBetween class:centered class:right>
   {@render children()}
 </div>
 
@@ -28,6 +34,10 @@
   }
   .centered {
     justify-content: center;
+    align-items: center;
+  }
+  .right {
+    justify-content: end;
     align-items: center;
   }
 </style>

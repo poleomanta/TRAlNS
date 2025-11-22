@@ -4,7 +4,7 @@
     import Map from "./Map.svelte";
     import Subtitle from "./Subtitle.svelte";
     import { DestinationModel } from "$lib/classes";
-    import { Minus, Plus } from "@lucide/svelte";
+    import { Info, Minus, Plus } from "@lucide/svelte";
     import {
         addDestinationToPlan,
         removeDestinationFromPlanByDestination,
@@ -15,6 +15,7 @@
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import { disableScrollHandling } from "$app/navigation";
+    import IconButton from "./IconButton.svelte";
 
     interface Props {
         destination: DestinationModel;
@@ -59,21 +60,28 @@
     {/if}
 
     <Map lat={destination.lat} lon={destination.lon} />
-    {#if !inPlan}
-        <button
-            onclick={() => {
-                addDestinationToPlan(destination);
-                refreshPlan();
-            }}><Plus />Add to planned destinations</button
-        >
-    {:else}
-        <button
-            onclick={() => {
-                removeDestinationFromPlanByDestination(destination);
-                refreshPlan();
-            }}><Minus />Remove from planned destinations</button
-        >
-    {/if}
+    <Row right={true}>
+        <IconButton>
+            <Info />
+        </IconButton>
+        {#if !inPlan}
+            <IconButton
+                click={() => {
+                    addDestinationToPlan(destination);
+                    refreshPlan();
+                }}
+                ><Plus />
+            </IconButton>
+        {:else}
+            <IconButton
+                click={() => {
+                    removeDestinationFromPlanByDestination(destination);
+                    refreshPlan();
+                }}
+                ><Minus />
+            </IconButton>
+        {/if}
+    </Row>
 </div>
 
 <style lang="scss">
