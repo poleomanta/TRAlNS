@@ -1,8 +1,8 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
-    import Search from '../components/Search.svelte';
-    import Subtitle from '../components/Subtitle.svelte';
-    import Title from '../components/Title.svelte';
+	import favicon from "$lib/assets/favicon.svg";
+	import Search from "../components/Search.svelte";
+	import Subtitle from "../components/Subtitle.svelte";
+	import Title from "../components/Title.svelte";
 
 	let { children } = $props();
 </script>
@@ -10,6 +10,10 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
+
+<main>
+	{@render children?.()}
+</main>
 
 <style lang="scss">
 	:global(*) {
@@ -25,16 +29,12 @@
 	}
 
 	main {
-		gap: .5em;
+		gap: 0.5em;
 		display: flex;
 		flex-direction: column;
 		background-color: white;
 		min-height: 100vh;
-		padding: 2em max(2em, calc((100% - 25em) / 2));
+		padding: 2em max(2em, calc((100% - 40em) / 2));
 		justify-content: center;
 	}
 </style>
-
-<main>
-  {@render children?.()}
-</main>

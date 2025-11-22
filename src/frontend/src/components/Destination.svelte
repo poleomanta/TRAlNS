@@ -3,6 +3,7 @@
     import type { Snippet } from "svelte";
     import Tag from "./Tag.svelte";
     import Row from "./Row.svelte";
+    import Map from "./Map.svelte";
     import Subtitle from "./Subtitle.svelte";
     import { DestinationModel } from "$lib/classes";
 
@@ -25,19 +26,15 @@
                 <a href={destination.website}> Destination website </a>
             {/if}
         </Row>
-    {:else}
-        <Subtitle>
-            {destination.tag}
-        </Subtitle>
-        {#if destination.website}
-            <a href={destination.website}> Destination website </a>
-        {/if}
     {/if}
+
     {#if destination.description}
         <div class="description">
             {destination.description}
         </div>
     {/if}
+
+    <Map lat={destination.lat} lon={destination.lon} />
 </div>
 
 <style lang="scss">
