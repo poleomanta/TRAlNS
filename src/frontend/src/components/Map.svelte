@@ -16,11 +16,14 @@
 
   onMount(() => {
     if (!browser) return;
+    // @ts-ignore
     const map = L.map(container).setView([lat, lon], 13);
+    // @ts-ignore
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+    // @ts-ignore
     L.marker([lat, lon]).addTo(map);
   });
 </script>
