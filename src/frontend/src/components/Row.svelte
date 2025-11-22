@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    flex-wrap: wrap;
   }
   .spaceBetween {
     justify-content: space-between;

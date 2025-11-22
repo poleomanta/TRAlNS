@@ -14,10 +14,14 @@
             360,
     );
     let color = $derived(`hsl(${hue}, 25%, 90%)`);
+
+    let displayName = $derived(
+        name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    );
 </script>
 
 <div style={`background-color:${color};`}>
-    {name}
+    {displayName}
 </div>
 
 <style lang="scss">
