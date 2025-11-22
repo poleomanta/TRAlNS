@@ -4,12 +4,13 @@
   interface Props {
     children: Snippet;
     spaceBetween?: boolean;
+    centered?: boolean;
   }
 
-  let { children, spaceBetween = false }: Props = $props();
+  let { children, spaceBetween = false, centered = false }: Props = $props();
 </script>
 
-<div class:spaceBetween>
+<div class:spaceBetween class:centered>
   {@render children()}
 </div>
 
@@ -23,6 +24,10 @@
   }
   .spaceBetween {
     justify-content: space-between;
+    align-items: center;
+  }
+  .centered {
+    justify-content: center;
     align-items: center;
   }
 </style>

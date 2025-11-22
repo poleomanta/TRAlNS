@@ -1,9 +1,10 @@
 <script lang="ts">
     import { DestinationModel } from "$lib/classes";
-    import Column from "../../components/Column.svelte";
     import type { PageProps } from "../$types";
     import Destination from "../../components/Destination.svelte";
     import Subtitle from "../../components/Subtitle.svelte";
+    import Pagination from "../../components/Pagination.svelte";
+    import Column from "../../components/Column.svelte";
 
     let { data }: PageProps = $props();
 
@@ -12,8 +13,8 @@
 </script>
 
 <Subtitle>Things you might like</Subtitle>
-<Column>
-    {#each destinations as d}
-        <Destination destination={d} />
-    {/each}
-</Column>
+<Pagination elements={destinations}>
+    {#snippet children(destination: DestinationModel) }
+        <Destination {destination} />
+    {/snippet}
+</Pagination>
