@@ -147,17 +147,4 @@
     .description {
         background-color: hsl(0, 0%, 98%);
     }
-    button {
-        all: unset;
-        cursor: pointer;
-        display: flex;
-        justify-content: end;
-        align-items: center;
-        gap: 0.25em;
-        flex-direction: row;
-        transition: transform ease-in-out 0.2s;
-    }
-    button:hover {
-        transform: scale(1.1) translate(-3%, -3%);
-    }
 </style>
