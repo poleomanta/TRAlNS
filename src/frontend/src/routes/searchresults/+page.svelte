@@ -6,6 +6,7 @@
 
     let { data }: PageProps  = $props();
 
+    // @ts-ignore
     const destinations = data.destinations as DestinationModel[];
 </script>
 
