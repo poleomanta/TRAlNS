@@ -4,12 +4,36 @@
     import Map from "./Map.svelte";
     import Subtitle from "./Subtitle.svelte";
     import { DestinationModel } from "$lib/classes";
-    import { Plus } from "@lucide/svelte";
-    import { addDestinationToPlan } from "$lib/planner";
+    import { Minus, Plus } from "@lucide/svelte";
+    import {
+        addDestinationToPlan,
+        removeDestinationFromPlanByDestination,
+        isInPlan,
+        getPlan,
+        PlanModel,
+    } from "$lib/planner.svelte";
+    import { onMount } from "svelte";
+    import { browser } from "$app/environment";
+    import { disableScrollHandling } from "$app/navigation";
 
     interface Props {
         destination: DestinationModel;
     }
+
+    let plan = $state(new PlanModel([]));
+    onMount(() => {
+        if (!browser) return;
+        plan = getPlan();
+    });
+    function refreshPlan() {
+        plan = getPlan();
+    }
+    // @ts-ignore
+    let inPlan = $derived.by(() => {
+        if (!browser) return false;
+        plan;
+        return isInPlan(destination);
+    });
 
     let { destination }: Props = $props();
 </script>
@@ -35,11 +59,21 @@
     {/if}
 
     <Map lat={destination.lat} lon={destination.lon} />
-    <button
-        onclick={() => {
-            addDestinationToPlan(destination);
-        }}><Plus />Add to planned destinations</button
-    >
+    {#if !inPlan}
+        <button
+            onclick={() => {
+                addDestinationToPlan(destination);
+                refreshPlan();
+            }}><Plus />Add to planned destinations</button
+        >
+    {:else}
+        <button
+            onclick={() => {
+                removeDestinationFromPlanByDestination(destination);
+                refreshPlan();
+            }}><Minus />Remove from planned destinations</button
+        >
+    {/if}
 </div>
 
 <style lang="scss">
@@ -65,7 +99,7 @@
         align-items: center;
         gap: 0.25em;
         flex-direction: row;
-        transition: transform ease-in-out 0.5s;
+        transition: transform ease-in-out 0.2s;
     }
     button:hover {
         transform: scale(1.1) translate(-3%, -3%);

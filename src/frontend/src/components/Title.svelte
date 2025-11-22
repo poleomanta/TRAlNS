@@ -14,7 +14,7 @@
 
 <style lang="scss">
   h1 {
-    font-family: "Fugaz One";
+    // font-family: "Fugaz One";
     font-style: normal;
     font-weight: 500;
     font-size: 2rem;

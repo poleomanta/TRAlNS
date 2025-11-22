@@ -2,7 +2,7 @@
     import Subtitle from "../../components/Subtitle.svelte";
     import Column from "../../components/Column.svelte";
     import Destination from "../../components/Destination.svelte";
-    import { getPlan } from "$lib/planner";
+    import { getPlan } from "$lib/planner.svelte";
     import { derived } from "svelte/store";
     import { browser } from "$app/environment";
 
