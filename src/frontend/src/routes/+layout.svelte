@@ -36,12 +36,5 @@
 </style>
 
 <main>
-	<img src="/img/munich.jpg" alt="Munich skyline" />
-	<Title>
-		TRAlNS
-	</Title>
-	<Subtitle>
-		Munich sightseeing made simple
-	</Subtitle>
-	<Search/>
+  {@render children?.()}
 </main>
