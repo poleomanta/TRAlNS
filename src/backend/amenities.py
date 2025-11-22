@@ -1,14 +1,13 @@
-from collections import namedtuple
 from dataclasses import dataclass, field
+from abc import abstractmethod
 from enum import Enum
-from typing import Final
-from pathlib import Path
-import os
-from destinations import Destination
+
 import osmnx as ox
+from destinations import Destination
 from geopandas import GeoDataFrame
 
 
+# TODO this should be OSM geometry, POINT, POLYGON, etc
 @dataclass
 class Location:
     lat: float
@@ -31,13 +30,32 @@ class AmenityStatus(str, Enum):
 class AmenityGroup:
     # Group all amenities of one type for a given location
     base_location: Location
-    kind: AmenityType
-    status: AmenityStatus
-    locations: list[Location] = field(default_factory=list)
+    locations: list[Location] # TODO not accurate
+    status: AmenityStatus = AmenityStatus.UNKNOWN
+
+    @abstractmethod
+    def getStatus(self) -> AmenityStatus:
+        pass
+
+    def __post_init__(self):
+        self.status = self.getStatus()
+
+@dataclass
+class WCAmenityGroup(AmenityGroup):
+    def getStatus(self) -> AmenityStatus:
+        count = len(self.locations)
+        print(count)
+
+        if count >= 3:
+            return AmenityStatus.GOOD
+        elif count == 2:
+            return AmenityStatus.DECENT
+        else:
+            return AmenityStatus.BAD
 
 def getAllAmenityData(address: str, radius: int = 300):
     """ TODO
-    - parameters?
+    - parameters
      """
     try:
         return ox.features.features_from_address(
@@ -46,10 +64,16 @@ def getAllAmenityData(address: str, radius: int = 300):
         return []
 
 
-def getWCData(df: GeoDataFrame) -> AmenityGroup:
-    # TODO exception
+def getWCData(df: GeoDataFrame, address) -> WCAmenityGroup:
     df2 = df[df['amenity'].isin(['toilets'])]
+
+    # Status for toilets is good if there are more than 2 in 300m, decent if 1, bad if none
+    locations = df2['geometry'].tolist()
+    print(locations)
+    return WCAmenityGroup(base_location=address, locations=locations)
+
     
 place = "Viktualienmarkt, Munich, Germany"
 df = getAllAmenityData(place)
-getWCData(df)
+group = getWCData(df, place)
+print(group)
