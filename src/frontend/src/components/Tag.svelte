@@ -27,5 +27,8 @@
         padding: 0.2em 0.5em;
         border-radius: 0.75em;
         width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
