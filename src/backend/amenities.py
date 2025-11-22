@@ -4,6 +4,7 @@ from enum import Enum
 
 import osmnx as ox
 
+from osmnx._errors import InsufficientResponseError
 from destinations import Destination
 from geopandas import GeoDataFrame
 from shapely.geometry import LineString, Point, Polygon
@@ -100,6 +101,7 @@ def getAmenityDataByLocation(lat: float, lon: float, radius: int = 300) -> list[
     except InsufficientResponseError:
         return []
 
-    # TODO add more amenitiess d
+    # TODO add more amenitiess
+    # https://wiki.openstreetmap.org/wiki/Key:amenity#Values
     return [_getWCData(df), _getFountainData(df), _getRestData(df)]
 
