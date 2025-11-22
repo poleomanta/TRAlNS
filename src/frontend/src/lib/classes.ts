@@ -15,3 +15,25 @@ export class DestinationModel {
         this.lon = lon;
     }
 }
+
+export class CoordinatesModel {
+    lat: number
+    lon: number
+
+    constructor(lat: number, lon: number) {
+        this.lat = lat;
+        this.lon = lon;
+    }
+}
+
+export class AmenityModel {
+    kind: string;
+    locations: CoordinatesModel[];
+    status: string;
+
+    constructor(kind: string, locations: CoordinatesModel[], status: string) {
+        this.kind = kind;
+        this.locations = locations;
+        this.status = status;
+    }
+}

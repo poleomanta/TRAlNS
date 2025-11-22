@@ -3,8 +3,8 @@
     import Row from "./Row.svelte";
     import Map from "./Map.svelte";
     import Subtitle from "./Subtitle.svelte";
-    import { DestinationModel } from "$lib/classes";
-    import { Info, Minus, Plus } from "@lucide/svelte";
+    import { AmenityModel, DestinationModel } from "$lib/classes";
+    import { Armchair, GlassWater, Info, Minus, Plus, Toilet } from "@lucide/svelte";
     import {
         addDestinationToPlan,
         removeDestinationFromPlanByDestination,
@@ -14,8 +14,8 @@
     } from "$lib/planner.svelte";
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
-    import { disableScrollHandling } from "$app/navigation";
     import IconButton from "./IconButton.svelte";
+    import Spinner from "./Spinner.svelte";
 
     interface Props {
         destination: DestinationModel;
@@ -36,10 +36,33 @@
         return isInPlan(destination);
     });
 
+    let infoShown = $state(false)
+    let amenitiesByType = $state<Record<string, AmenityModel>>({});
+    let loadingAmenities = $state(false);
+
+    const iconForAmenityType: Record<string, typeof Armchair> = {
+        "WC": Toilet,
+        "REST": Armchair,
+        "FOUNTAIN": GlassWater
+    }
+
+    const amenityTypes = ["FOUNTAIN", "REST", "WC"];
+
+    async function toggleInfo() {
+        infoShown = !infoShown;
+
+        if (infoShown) {
+            loadingAmenities = true;
+            const amenities = await fetch(`/api/amenities?lat=${destination.lat}&lon=${destination.lon}`).then(res => res.json());
+            loadingAmenities = false;
+            // @ts-ignore
+            amenitiesByType = Object.fromEntries(amenities.map(x => [x.kind, x]));
+        }
+    }
     let { destination }: Props = $props();
 </script>
 
-<div>
+<div class="card">
     {#if destination.name}
         <Subtitle>
             {destination.name}
@@ -61,7 +84,7 @@
 
     <Map lat={destination.lat} lon={destination.lon} />
     <Row right={true}>
-        <IconButton>
+        <IconButton click={toggleInfo}>
             <Info />
         </IconButton>
         {#if !inPlan}
@@ -82,10 +105,35 @@
             </IconButton>
         {/if}
     </Row>
+
+    {#if infoShown}
+        <div class="info">
+            {#if loadingAmenities}
+            <Spinner/>
+            {/if}
+            {#each amenityTypes as type}
+                {#if amenitiesByType[type]}
+                    <Row>
+                        {@const Icon = iconForAmenityType[type]}
+                        <Icon />
+                        <span>
+                            {#if type === "WC"} Restroom {/if}
+                            {#if type === "REST"} Rest Area {/if}
+                            {#if type === "FOUNTAIN"} Drinkable Water {/if}
+                        </span>
+                        •
+                        <span>
+                            {amenitiesByType[type].locations.length} nearby
+                        </span>
+                    </Row>
+                {/if}
+            {/each}
+        </div>
+    {/if}
 </div>
 
 <style lang="scss">
-    div {
+    div.card {
         all: unset;
         height: auto;
         padding: 1em 1em;
