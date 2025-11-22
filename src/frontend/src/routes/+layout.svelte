@@ -1,5 +1,6 @@
 <script lang="ts">
 	import favicon from "$lib/assets/favicon.svg";
+    import PageNavigation from "../components/PageNavigation.svelte";
 	import Search from "../components/Search.svelte";
 	import Subtitle from "../components/Subtitle.svelte";
 	import Title from "../components/Title.svelte";
@@ -14,6 +15,7 @@
 <main>
 	{@render children?.()}
 </main>
+<PageNavigation/>
 
 <style lang="scss">
 	:global(*) {
