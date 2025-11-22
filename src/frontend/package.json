@@ -22,6 +22,8 @@
 		"vite": "^7.2.2"
 	},
 	"dependencies": {
-		"hash.js": "^1.1.7"
+		"@types/leaflet": "^1.9.21",
+		"hash.js": "^1.1.7",
+		"leaflet": "^1.9.4"
 	}
 }
