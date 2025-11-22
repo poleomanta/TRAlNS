@@ -3,6 +3,8 @@
     import Row from './Row.svelte';
     import IconButton from './IconButton.svelte';
     import { ChevronLeft, ChevronRight } from '@lucide/svelte';
+    import { page } from '$app/state';
+    import { browser } from '$app/environment';
 
   interface Props {
     elements: T[];
@@ -12,7 +14,18 @@
   let { elements, children }: Props = $props();
 
   const count = $derived(elements.length);
-  let currentPage = $derived(1);
+  // take the page number from the search params (apply max if needed) or default to 1:
+  let currentPage = $state<number>((() => {
+    let pageParam = page.url.searchParams.get('page');
+    let pageNumber = pageParam ? parseInt(pageParam, 10) : 1;
+    const maxPage = Math.max(1, Math.ceil(count / 10));
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      pageNumber = 1;
+    } else if (pageNumber > maxPage) {
+      pageNumber = maxPage;
+    }
+    return pageNumber;
+  })());
 
   const elementsPerPage = 10;
   let currentElements = $derived(
@@ -21,6 +34,13 @@
       currentPage * elementsPerPage,
     ),
   );
+
+  $effect(() => {
+    if (!browser) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', currentPage.toString());
+    window.history.replaceState({}, '', url.toString());
+  });
 </script>
 
 <style lang="scss">
