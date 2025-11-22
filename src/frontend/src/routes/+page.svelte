@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { leisureTags, tourismTags } from "$lib/tags";
+    import { leisureTags, tourismTags, unusedTags } from "$lib/tags";
   import Row from "../components/Row.svelte";
   import Search from "../components/Search.svelte";
   import Subtitle from "../components/Subtitle.svelte";
   import Tag from "../components/Tag.svelte";
 
-  const tags = leisureTags.concat(tourismTags);
+  const tags = leisureTags.concat(tourismTags).filter(item => !unusedTags.includes(item));
   tags.sort();
 </script>
 
