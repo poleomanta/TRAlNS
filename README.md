@@ -15,7 +15,7 @@ Sometimes it's really hard to find stuff to do in the city if you don't want to 
 <img src="slides/img/screenshots/start.png" width="100%">
 Home menu
 
-<img src="slides/img/screenshots/plan.png" width="100%">
+<img src="slides/img/screenshots/plan2.png" width="100%">
 Planning menu
 
 ## Implementation
@@ -24,7 +24,7 @@ Planning menu
 We use Svelte+TS
 
 ### Backend
-Python with common OSM libraries (OSMPythonTools, OSMnx) and OpenRouteService.
+Python with common libraries (OSMPythonTools, OSMnx) to query Overpass and Nominatim. ALso, OpenRouteService for routing.
 
 ## Installation
 
