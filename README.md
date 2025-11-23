@@ -2,13 +2,13 @@
 
 Sometimes it's really hard to find stuff to do in the city if you don't want to spend money. Sometimes we just want to chill and exist in our beautiful city without consuming. 
 
-The Really Affordable leisure Navigation Service (TRAlNS) will make this easier! In this platform, users can discover destinations and plan outings. We want to help answer questions like:
+**T**he **R**eally **A**ffordable **l**eisure **N**avigation **S**ervice (**TRAlNS**) will make this easier! In this platform, users can discover destinations and plan outings. We want to help answer questions like:
 
-- Where can my D-ticket take me for a day trip?
-- What free amenities are around this cool spot? (benches, drinking water, toilets, parks)
-- What activities can I do with x money in y time?
-- What cool and free events are in my area?
-- What's going on around my area: demos, citizen exchanges, calls for volunteering, etc?
+- 🚂 Where can my D-ticket take me for a day trip?
+- 🚰 What free amenities are around this cool spot? (benches, drinking water, toilets, parks)
+- 🎭 What activities can I do with x money in y time?
+- 💃 What cool and free events are in my area?
+- 📣 What's going on around my area: demos, citizen exchanges, calls for volunteering, etc?
 
 ## Implementation
 
@@ -52,3 +52,10 @@ make
 Will begin serving the frontend.
 
 Enjoy!
+
+### Slides
+
+```bash
+bun install -g cleaver
+cleaver --debug slides.md --title TRAlNS
+```
