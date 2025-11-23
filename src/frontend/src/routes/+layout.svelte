@@ -38,5 +38,6 @@
 		min-height: 100vh;
 		padding: 2em max(2em, calc((100% - 40em) / 2));
 		justify-content: center;
+		padding-bottom: 3.5em;
 	}
 </style>

@@ -51,6 +51,22 @@ def route():
     response = requests.post(url, headers=headers, json=payload)
     return response.json()
 
+@app.route('/api/autocomplete', methods=['GET'])
+def autocomplete():
+    query = parse.unquote(request.args.get('query') or '')
+
+    api_key = API_KEY
+    #48.10181/11.47591
+    #48.2759/11.7111
+    url = "https://api.openrouteservice.org/geocode/autocomplete?text=" + parse.quote(query) + "&boundary.rect.min_lat=48.10171&boundary.rect.min_lon=11.47581&boundary.rect.max_lat=48.27599&boundary.rect.max_lon=11.71119"
+    headers = {
+        "Authorization": api_key,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers)
+    return response.json()
+
 if __name__ == '__main__':
  load_dotenv() 
  API_KEY=os.getenv('API_KEY')
