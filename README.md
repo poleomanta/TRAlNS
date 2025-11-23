@@ -10,6 +10,14 @@ Sometimes it's really hard to find stuff to do in the city if you don't want to 
 - 💃 What cool and free events are in my area?
 - 📣 What's going on around my area: demos, citizen exchanges, calls for volunteering, etc?
 
+## Screenshots
+
+<img src="slides/img/screenshots/start.png" width="100%">
+Home menu
+
+<img src="slides/img/screenshots/plan.png" width="100%">
+Planning menu
+
 ## Implementation
 
 ### Frontend
