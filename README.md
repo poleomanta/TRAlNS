@@ -12,11 +12,20 @@ Sometimes it's really hard to find stuff to do in the city if you don't want to 
 
 ## Screenshots
 
+**Home menu**
 <img src="slides/img/screenshots/start.png" width="100%">
-Home menu
 
-<img src="slides/img/screenshots/plan2.png" width="100%">
-Planning menu
+**Autocomplete**
+<img src="slides/img/screenshots/autocomplete.png" width="100%">
+
+**Search Results**
+<img src="slides/img/screenshots/search.png" width="100%">
+
+**Amenities**
+<img src="slides/img/screenshots/amenities.png" width="100%">
+
+**Planning menu**
+<img src="slides/img/screenshots/plan.png" width="100%">
 
 ## Implementation
 
@@ -32,7 +41,6 @@ Python with common libraries (OSMPythonTools, OSMnx) to query Overpass and Nomin
 
 - Python >= 3.8
 - make
-- nvm
 - bun
 - An OpenRouteService API key
 
@@ -67,3 +75,8 @@ Enjoy!
 bun install -g cleaver
 cleaver --debug slides.md --title TRAlNS
 ```
+
+### Credit
+- Munich Skyline Picture: https://www.freepik.com/free-vector/munich-germany-skyline-with-panorama-white-background-vector-illustration_23307297.htm#fromView=search&page=1&position=4&uuid=8bbad2eb-d925-4a89-aeb5-bd1e2eda710b&query=Munich
+- OpenStreetMap for maps and search results
+- OpenRouteService for autocompletion and navigation

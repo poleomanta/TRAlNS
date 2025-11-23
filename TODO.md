@@ -1,2 +1,0 @@
-Attributions:
-- <a href="https://www.freepik.com/free-vector/munich-germany-skyline-with-panorama-white-background-vector-illustration_23307297.htm#fromView=search&page=1&position=4&uuid=8bbad2eb-d925-4a89-aeb5-bd1e2eda710b&query=Munich">Image by Sky and Glass on Freepik</a>
