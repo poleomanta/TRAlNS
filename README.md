@@ -72,8 +72,9 @@ Enjoy!
 ### Slides
 
 ```bash
-bun install -g cleaver
-cleaver --debug slides.md --title TRAlNS
+cd sildes
+make setup
+make
 ```
 
 ### Credit
