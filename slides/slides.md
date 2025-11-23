@@ -26,17 +26,30 @@ HackaTUM - November 2025
 * 🎭 What activities can I do with x money in y time?
 * 💃 What cool and free events are in my area?
 * 📣 What's going on around my area? Demos, citizen exchanges, calls for volunteering, etc?
---
-
-### Implementation
-
-<img src="implementation.png" width="100%">
 
 --
 
 # Live Demo!
 
 --
-# Q&A
+
+### Implementation
+
+<img src="img/diagram/implementation.png" width="100%">
+
+--
+
+### Home menu
+
+<img src="img/screenshots/start.png" width="100%">
+
+--
+
+### Planning menu
+
+<img src="img/screenshots/plan.png" width="100%">
+
+--
+
 # 🦆 🥼 Thank you! 🚄🎲
 --
