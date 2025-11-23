@@ -46,7 +46,7 @@ Python with common libraries (OSMPythonTools, OSMnx) to query Overpass and Nomin
 
 ### Usage
 
-After cloning and cd-ing the repo, create a `.env` file with your OpenRouteService API key in the `src/backend` directory (there's an example file),
+After cloning and cd-ing the repo, create a `.env` file with your OpenRouteService API key in the `src/backend` directory (there's an example file).
 
 To run the backend:
 
