@@ -47,7 +47,7 @@ HackaTUM - November 2025
 
 ### Planning menu
 
-<img src="img/screenshots/plan.png" width="100%">
+<img src="img/screenshots/plan2.png" width="100%">
 
 --
 
